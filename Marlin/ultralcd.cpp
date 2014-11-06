@@ -313,12 +313,13 @@ static void lcd_sdcard_stop()
 #endif
 
     quickStop();
+#ifdef WITBOX
     #if X_MAX_POS < 250
       plan_buffer_line(X_MIN_POS, 150, current_position[Z_AXIS]+20, current_position[E_AXIS], manual_feedrate[X_AXIS]/60, active_extruder);
     #else
       plan_buffer_line(X_MAX_POS-15, Y_MAX_POS-15, Z_MAX_POS-15, current_position[E_AXIS], manual_feedrate[X_AXIS]/60, active_extruder);
     #endif
-
+#endif
     if(SD_FINISHED_STEPPERRELEASE)
     {
         enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
