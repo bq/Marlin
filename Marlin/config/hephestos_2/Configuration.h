@@ -332,14 +332,14 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
   #ifdef AUTO_BED_LEVELING_GRID
 
     // set the rectangle in which to probe
-    #define LEFT_PROBE_BED_POSITION 30
-    #define RIGHT_PROBE_BED_POSITION 200
-    #define BACK_PROBE_BED_POSITION 185
-    #define FRONT_PROBE_BED_POSITION 30
+    #define LEFT_PROBE_BED_POSITION 1
+    #define RIGHT_PROBE_BED_POSITION 170
+    #define BACK_PROBE_BED_POSITION 275
+    #define FRONT_PROBE_BED_POSITION 1
 
      // set the number of grid points per dimension
      // I wouldn't see a reason to go above 3 (=9 probing points on the bed)
-    #define AUTO_BED_LEVELING_GRID_POINTS 2
+    #define AUTO_BED_LEVELING_GRID_POINTS 3
 
 
   #else  // not AUTO_BED_LEVELING_GRID
@@ -348,19 +348,24 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
       #define ABL_PROBE_PT_1_X X_MIN_POS + 40 + X_PROBE_OFFSET_FROM_EXTRUDER
       #define ABL_PROBE_PT_1_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
-      #define ABL_PROBE_PT_2_X X_MAX_POS - 40 + X_PROBE_OFFSET_FROM_EXTRUDER 
+      #define ABL_PROBE_PT_2_X X_MAX_POS - 40 + X_PROBE_OFFSET_FROM_EXTRUDER
       #define ABL_PROBE_PT_2_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
       #define ABL_PROBE_PT_3_X (X_MAX_POS+X_MIN_POS)/2 + X_PROBE_OFFSET_FROM_EXTRUDER
       #define ABL_PROBE_PT_3_Y Y_MAX_POS - 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
 
-      #define ABL_MANUAL_PT_1_X ABL_PROBE_PT_1_X
-      #define ABL_MANUAL_PT_1_Y ABL_PROBE_PT_1_Y
-      #define ABL_MANUAL_PT_2_X ABL_PROBE_PT_2_X 
-      #define ABL_MANUAL_PT_2_Y ABL_PROBE_PT_2_Y
-      #define ABL_MANUAL_PT_3_X ABL_PROBE_PT_3_X
-      #define ABL_MANUAL_PT_3_Y ABL_PROBE_PT_3_Y
-
   #endif // AUTO_BED_LEVELING_GRID
+
+  #ifdef LEVEL_SENSOR
+    // Three point manual leveling positions are used by bq wizards
+    // even if AUTO_BED_LEVELING_GRID is selected.
+    #define ABL_MANUAL_PT_1_X X_MIN_POS + 40 + X_PROBE_OFFSET_FROM_EXTRUDER
+    #define ABL_MANUAL_PT_1_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+    #define ABL_MANUAL_PT_2_X X_MAX_POS - 40 + X_PROBE_OFFSET_FROM_EXTRUDER
+    #define ABL_MANUAL_PT_2_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+    #define ABL_MANUAL_PT_3_X (X_MAX_POS+X_MIN_POS)/2 + X_PROBE_OFFSET_FROM_EXTRUDER
+    #define ABL_MANUAL_PT_3_Y Y_MAX_POS - 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+  #endif // LEVEL_SENSOR
+
 
   #define Z_RAISE_BEFORE_HOMING 0       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
@@ -602,9 +607,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  * Support for a filament diameter sensor
  * Also allows adjustment of diameter at print time (vs  at slicing)
  * Single extruder only at this point (extruder 0)
- * 
+ *
  * Motherboards
- * 34 - RAMPS1.4 - uses Analog input 5 on the AUX2 connector 
+ * 34 - RAMPS1.4 - uses Analog input 5 on the AUX2 connector
  * 81 - Printrboard - Uses Analog input 2 on the Exp1 connector (version B,C,D,E)
  * 301 - Rambo  - uses Analog input 3
  * Note may require analog pins to be defined for different motherboards
@@ -621,7 +626,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define MAX_MEASUREMENT_DELAY       20  //delay buffer size in bytes (1 byte = 1cm)- limits maximum measurement delay allowable (must be larger than MEASUREMENT_DELAY_CM  and lower number saves RAM)
 
 //defines used in the code
-#define DEFAULT_MEASURED_FILAMENT_DIA  DEFAULT_NOMINAL_FILAMENT_DIA  //set measured to nominal initially 
+#define DEFAULT_MEASURED_FILAMENT_DIA  DEFAULT_NOMINAL_FILAMENT_DIA  //set measured to nominal initially
 
 //When using an LCD, uncomment the line below to display the Filament sensor data on the last line instead of status.  Status will appear for 5 sec.
 //#define FILAMENT_LCD_DISPLAY
