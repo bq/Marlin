@@ -1198,7 +1198,7 @@ static void do_blocking_extrude_to(float e) {
 }
 
 #ifdef AUTO_BED_LEVELING_GRID
-static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
+void set_bed_level_equation_lsq(double *plane_equation_coefficients)
 {
     vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
     planeNormal.debug("planeNormal");

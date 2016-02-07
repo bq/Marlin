@@ -44,6 +44,11 @@
 #include "LightManager.h"
 #include "cardreader.h"
 
+#ifdef AUTO_BED_LEVELING_GRID
+  // Make sure we have qr_solve() defined at this point
+  #include "qr_solve.h"
+#endif
+
 bool raised = false;
 extern bool home_all_axis;
 extern bool bed_leveling;
@@ -65,6 +70,8 @@ extern void clean_up_after_endstop_move();
 extern void do_blocking_move_to(float x, float y, float z);
 extern void setup_for_endstop_move();
 extern float probe_pt(float x, float y, float z_before, int retract_action = 0);
+
+extern void set_bed_level_equation_lsq(double *plane_equation_coefficients);
 
 void action_set_temperature(uint16_t degrees)
 {
@@ -249,6 +256,9 @@ void gui_action_z_homing()
 }
 
 #ifdef LEVEL_SENSOR
+#ifndef AUTO_BED_LEVELING_GRID
+	// If AUTO_BED_LEVELING_GRID is set then action_get_plane()
+	// will not call this function, let's disable it to make the compiler happy.
 static void set_bed_level_equation_3pts(float z_at_pt_1, float z_at_pt_2, float z_at_pt_3) 
 {
 
@@ -275,6 +285,7 @@ static void set_bed_level_equation_3pts(float z_at_pt_1, float z_at_pt_2, float 
 
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 }
+#endif //AUTO_BED_LEVELING_GRID
 
 void action_get_plane()
 {
@@ -838,20 +849,37 @@ void action_offset()
 	feedrate = homing_feedrate[Z_AXIS];
 
 	// Probe at 3 arbitrary points
-	// probe 1
-	float z_at_pt_1 = probe_pt(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, Z_RAISE_BEFORE_PROBING);
-	// probe 2
-	float z_at_pt_2 = probe_pt(ABL_PROBE_PT_2_X, ABL_PROBE_PT_2_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
-	// probe 3
-	float z_at_pt_3 = probe_pt(ABL_PROBE_PT_3_X, ABL_PROBE_PT_3_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
+
+	#ifdef AUTO_BED_LEVELING_GRID
+	// @TODO Should this function use the grid instead of the three
+	// manual probe points ? Seems only to be used by witbox.
+		float z_at_pt_1 = probe_pt(ABL_MANUAL_PT_1_X, ABL_MANUAL_PT_1_Y, Z_RAISE_BEFORE_PROBING);
+		float z_at_pt_2 = probe_pt(ABL_MANUAL_PT_2_X, ABL_MANUAL_PT_2_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
+		float z_at_pt_3 = probe_pt(ABL_MANUAL_PT_3_X, ABL_MANUAL_PT_3_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
+	#else
+		// probe 1
+		float z_at_pt_1 = probe_pt(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, Z_RAISE_BEFORE_PROBING);
+		// probe 2
+		float z_at_pt_2 = probe_pt(ABL_PROBE_PT_2_X, ABL_PROBE_PT_2_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
+		// probe 3
+		float z_at_pt_3 = probe_pt(ABL_PROBE_PT_3_X, ABL_PROBE_PT_3_Y, current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS);
+	#endif // AUTO_BED_LEVELING_GRID
 
 	clean_up_after_endstop_move(); //Dissable endstops
 
 	plan_bed_level_matrix.set_to_identity();
 
-	vector_3 pt1 = vector_3(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, z_at_pt_1);
-	vector_3 pt2 = vector_3(ABL_PROBE_PT_2_X, ABL_PROBE_PT_2_Y, z_at_pt_2);
-	vector_3 pt3 = vector_3(ABL_PROBE_PT_3_X, ABL_PROBE_PT_3_Y, z_at_pt_3);
+	#ifdef AUTO_BED_LEVELING_GRID
+	// @TODO Should this function use the grid instead of the three
+	// manual probe points ? Seems only to be used by witbox.
+		vector_3 pt1 = vector_3(ABL_MANUAL_PT_1_X, ABL_MANUAL_PT_1_Y, z_at_pt_1);
+		vector_3 pt2 = vector_3(ABL_MANUAL_PT_2_X, ABL_MANUAL_PT_2_Y, z_at_pt_2);
+		vector_3 pt3 = vector_3(ABL_MANUAL_PT_3_X, ABL_MANUAL_PT_3_Y, z_at_pt_3);
+	#else
+		vector_3 pt1 = vector_3(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, z_at_pt_1);
+		vector_3 pt2 = vector_3(ABL_PROBE_PT_2_X, ABL_PROBE_PT_2_Y, z_at_pt_2);
+		vector_3 pt3 = vector_3(ABL_PROBE_PT_3_X, ABL_PROBE_PT_3_Y, z_at_pt_3);
+	#endif // AUTO_BED_LEVELING_GRID
 
 	vector_3 from_2_to_1 = (pt1 - pt2).get_normal();
 	vector_3 from_3_to_2 = (pt2 - pt3).get_normal();
