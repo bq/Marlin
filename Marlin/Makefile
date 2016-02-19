@@ -236,6 +236,8 @@ CXXSRC += Action.cpp GuiAction.cpp AutoLevelManager.cpp OffsetManager.cpp Storag
 
 CXXSRC += Marlin_main.cpp MarlinSerial.cpp SDCache.cpp
 
+CXXSRC += Servo.cpp
+
 
 # Define all object files.
 OBJ = ${patsubst %.c,$(BUILD_DIR)/%.o,${CSRC}}
