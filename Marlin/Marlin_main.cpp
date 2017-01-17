@@ -2345,7 +2345,7 @@ SERIAL_PROTOCOLPGM("Standard Deviation: ");
 SERIAL_PROTOCOL_F(sigma, 6);
 SERIAL_PROTOCOLPGM("\n\n");
 
-Sigma_Exit:
+Sigma_Exit;
       }
         break;
 	}
