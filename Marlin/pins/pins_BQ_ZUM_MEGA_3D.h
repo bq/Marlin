@@ -76,8 +76,8 @@
  #define HBP_HEATER_AUX		5
 
  // Cooling Fans
- #define FAN_BLOWER_PIN     12
- #define FAN_BLOCK_PIN		11 
+ #define FAN_BLOWER_PIN     2
+ #define FAN_BLOCK_PIN		6
  
  #define FAN_PIN            FAN_BLOWER_PIN 
   
