@@ -161,9 +161,8 @@ class U8GLIB : public Print
 
     void drawXBM(u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_t h, const uint8_t *bitmap)
       { u8g_DrawXBM(&u8g, x, y, w, h, bitmap); }
-    void drawXBMP(u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_t h, const u8g_pgm_uint8_t *bitmap)
-      { u8g_DrawXBMP(&u8g, x, y, w, h, bitmap); }
-    
+    void drawXBMP(u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_t h, const u8g_pgm_uint8_t *bitmap, uint8_t inverse)
+      { u8g_DrawXBMP(&u8g, x, y, w, h, bitmap, inverse); }
       
     /* font handling */
     void setFont(const u8g_fntpgm_uint8_t *font) {u8g_SetFont(&u8g, font); }

@@ -94,7 +94,7 @@ namespace ui
 		painter.firstPage();
 		do
 		{
-			painter.drawBitmap(34,10,splash_width,splash_height,bits_logo_splash);
+			painter.drawBitmap(splash_x, splash_y, splash_width, splash_height, bits_logo_about,0);
 		} while(painter.nextPage());
 
 	}

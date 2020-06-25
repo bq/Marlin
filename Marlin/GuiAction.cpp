@@ -44,6 +44,33 @@
 #include "LightManager.h"
 #include "cardreader.h"
 
+#ifdef AUTO_BED_LEVELING_GRID
+	#include "config/hephestos_2/Configuration.h"
+	#include "qr_solve.h"
+	static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
+	{
+    vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
+    planeNormal.debug("planeNormal");
+    plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
+    //bedLevel.debug("bedLevel");
+
+    //plan_bed_level_matrix.debug("bed level before");
+    //vector_3 uncorrected_position = plan_get_position_mm();
+    //uncorrected_position.debug("position before");
+
+    vector_3 corrected_position = plan_get_position();
+//    corrected_position.debug("position after");
+    current_position[X_AXIS] = corrected_position.x;
+    current_position[Y_AXIS] = corrected_position.y;
+    current_position[Z_AXIS] = corrected_position.z;
+
+    // put the bed at 0 so we don't go below it.
+    current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
+
+    plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+	}
+#endif
+
 #ifdef DOGLCD
 	#include "StatsManager.h"
 	#include "HeatedbedManager.h"
@@ -301,9 +328,9 @@ void action_get_plane()
 	if(HeatedbedManager::single::instance().detected())
 	{
 		temp::TemperatureManager::single::instance().setBedTargetTemperature(0);
+		unsigned long curtime = millis();
 		while(HeatedbedManager::single::instance().detected() && temp::TemperatureManager::single::instance().getBedCurrentTemperature() > BED_AUTOLEVEL_TEMP)
 		{
-			unsigned long curtime = millis();
 			if(( millis() - curtime) > 1000 ) //Print Temp Reading every 1 second while heating up.
 			{
 				float tt=temp::TemperatureManager::single::instance().getCurrentTemperature();
@@ -316,6 +343,8 @@ void action_get_plane()
 				SERIAL_PROTOCOLLN("");
 				curtime = millis();
 			}
+			temp::TemperatureManager::single::instance().manageTemperatureControl();
+			lcd_update();
 		};
 	}
 #endif // HEATER_BED_PIN > -1
@@ -698,6 +727,11 @@ void action_start_print()
 		StatsManager::single::instance().increaseTotalPrints();
 #endif //DOGLCD
 
+
+
+
+
+
 #ifdef FAN_BOX_PIN
 	if(FanManager::single::instance().state() == true)
 	{
@@ -904,6 +938,11 @@ void action_offset()
 	current_position[Z_AXIS] = 0;
 	z_saved_homing = OffsetManager::single::instance().getOffset();
 
+
+	SERIAL_PROTOCOLPGM("actual Offset: ");
+	SERIAL_PROTOCOL(OffsetManager::single::instance().getOffset());
+	SERIAL_PROTOCOLPGM("\n");
+
 	plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 	setup_for_endstop_move();
 
@@ -951,9 +990,11 @@ void action_offset()
 	{
 		current_position[Z_AXIS] = -(z_saved_homing - z_offset);
 	}
+
 	do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]);
 
 	current_position[Z_AXIS] = plan_get_axis_position(Z_AXIS);
+
 }
 #endif //LEVEL_SENSOR
 
@@ -987,6 +1028,10 @@ void action_offset_rest()
 void action_save_offset()
 {
 	OffsetManager::single::instance().saveOffset();
+
+	SERIAL_PROTOCOLPGM("actual Offset: ");
+	SERIAL_PROTOCOL(OffsetManager::single::instance().getOffset());
+	SERIAL_PROTOCOLPGM("\n");
 }
 
 void action_wizard_init()

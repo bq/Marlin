@@ -46,7 +46,7 @@ namespace ui
 	class Icon 
 	{	
 		public:
-			Icon(Size const & size, const unsigned char * bitmap, const unsigned char * focused_bitmap = 0, const char * text = 0);
+			Icon(Size const & size, const unsigned char * bitmap, const char * text = 0);
 			virtual ~Icon();
 
 			uint8_t const & width() const;
@@ -59,7 +59,6 @@ namespace ui
 		protected:
 			Size m_size;
 			const unsigned char * m_bitmap;
-			const unsigned char * m_focused_bitmap;
 			const char * m_text;
 	};
 }

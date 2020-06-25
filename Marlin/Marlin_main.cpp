@@ -1281,32 +1281,6 @@ static void do_blocking_extrude_to(float e) {
 	feedrate = oldFeedRate;
 }
 
-#ifdef AUTO_BED_LEVELING_GRID
-static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
-{
-    vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
-    planeNormal.debug("planeNormal");
-    plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
-    //bedLevel.debug("bedLevel");
-
-    //plan_bed_level_matrix.debug("bed level before");
-    //vector_3 uncorrected_position = plan_get_position_mm();
-    //uncorrected_position.debug("position before");
-
-    vector_3 corrected_position = plan_get_position();
-//    corrected_position.debug("position after");
-    current_position[X_AXIS] = corrected_position.x;
-    current_position[Y_AXIS] = corrected_position.y;
-    current_position[Z_AXIS] = corrected_position.z;
-
-    // put the bed at 0 so we don't go below it.
-    current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
-
-    plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-}
-
-#endif // AUTO_BED_LEVELING_GRID
-
 static void run_z_probe() {
     plan_bed_level_matrix.set_to_identity();
     feedrate = homing_feedrate[Z_AXIS];
@@ -1320,18 +1294,28 @@ static void run_z_probe() {
     zPosition = st_get_position_mm(Z_AXIS);
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS]);
 
-    // move up the retract distance
-    zPosition += home_retract_mm(Z_AXIS);
-    plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
-    st_synchronize();
 
-    // move back down slowly to find bed
-    feedrate = homing_slow_feedrate[Z_AXIS];
-    zPosition -= home_retract_mm(Z_AXIS) * 2;
-    plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
-    st_synchronize();
 
-    current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
+    float zpos=0;
+    for (int8_t prob = 1; prob <= Z_PROBE_REPEAT_SENSOR; prob++)
+    {
+      // move up the retract distance
+      zPosition += home_retract_mm(Z_AXIS);
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
+      st_synchronize();
+
+      // move back down slowly to find bed
+      feedrate = homing_slow_feedrate[Z_AXIS];
+      zPosition -= home_retract_mm(Z_AXIS) * 2;
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS], feedrate/60, active_extruder);
+      st_synchronize();
+
+      zpos = zpos + st_get_position_mm(Z_AXIS);
+
+    }
+
+    current_position[Z_AXIS] = zpos / Z_PROBE_REPEAT_SENSOR;//st_get_position_mm(Z_AXIS); //st_get_position_mm(Z_AXIS);
+
     // make sure the planner knows where we are as it may be a bit different than we last said to move to
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 }
@@ -1857,9 +1841,9 @@ void process_commands()
 	
 		if(HeatedbedManager::single::instance().getMode() == eeprom::HEATEDBED_ON && PrintManager::single::instance().state() != SERIAL_CONTROL)
 		{
-			char cmd[LONG_FILENAME_LENGTH];
-			sprintf_P(cmd, PSTR("M190 S%d"), ABS_PREHEAT_HPB_TEMP);
-			enquecommand(cmd);
+			//char cmd[LONG_FILENAME_LENGTH];               !!!!!!!!!!!!!!!!!!!!!!!AGUS
+			//sprintf_P(cmd, PSTR("M190 S%d"), ABS_PREHEAT_HPB_TEMP);
+			//enquecommand(cmd);
 		}
 	  }
       else if(PrintManager::single::instance().state() == SERIAL_CONTROL && card.isFileAtBegin() == false)

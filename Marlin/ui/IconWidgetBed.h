@@ -40,7 +40,7 @@ namespace ui
 		class IconWidgetBed : public Icon, public Observer<T>
 	{
 		public:
-			IconWidgetBed(Size const & size, const unsigned char* bitmap, const unsigned char * focused_bitmap, const unsigned char* bitmap_2, const unsigned char * focused_bitmap_2, const char * text, Subject<T> * model);
+			IconWidgetBed(Size const & size, const unsigned char* bitmap, const unsigned char* bitmap_2, const char * text, Subject<T> * model);
 			virtual ~IconWidgetBed();
 
 			void update(T value);
@@ -53,16 +53,14 @@ namespace ui
 			bool m_above_switch;
 			
 			const unsigned char * m_bitmap_2;
-			const unsigned char * m_focused_bitmap_2;
 	};
 
 	template <typename T>
-	IconWidgetBed<T>::IconWidgetBed(Size const & size, const unsigned char* bitmap, const unsigned char * focused_bitmap, const unsigned char* bitmap_2, const unsigned char * focused_bitmap_2, const char * text, Subject<T> * model)
-		: Icon(size, bitmap, focused_bitmap, text)
+	IconWidgetBed<T>::IconWidgetBed(Size const & size, const unsigned char* bitmap, const unsigned char* bitmap_2, const char * text, Subject<T> * model)
+		: Icon(size, bitmap, text)
 		, Observer<T>(model)
 		, m_above_switch(false)
 		, m_bitmap_2(bitmap_2)
-		, m_focused_bitmap_2(focused_bitmap_2)
 	{ }
 
 	template <typename T>
@@ -89,16 +87,16 @@ namespace ui
 		
 		if(temp::TemperatureManager::single::instance().getBedCurrentTemperature() < (BED_HOT_TEMP + bed_histeresis))
 		{
-			painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap : m_bitmap);
+			painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap, (focused) ? 1 : 0);
 			m_above_switch = false;
 		}
 		else
 		{
-			painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap_2 : m_bitmap_2);
+			painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap_2, (focused) ? 1 : 0);
 			m_above_switch = true;
 		}
 	#else
-		painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap : m_bitmap);
+		painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap, (focused) ? 1 : 0);
 	#endif
 	
 		if(focused)

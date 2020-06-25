@@ -156,7 +156,7 @@ namespace ui
 		setFont(FontType_t::BODY_FONT);
 
 		// Draw SD small icon
-		drawBitmap(m_working_area.x_init, m_working_area.y_init, little_icon_width, little_icon_height, bits_sd_small);
+		drawBitmap(m_working_area.x_init, m_working_area.y_init, little_icon_width, little_icon_height, bits_sd_small, 0);
 
 		// Draw the percentage done
 		m_working_area.x_init += little_icon_width + 4;
@@ -571,9 +571,9 @@ namespace ui
 		m_impl.drawBox(x, y, w, h);
 	}
 
-	void GuiPainter::drawBitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const unsigned char* bitmap)
+	void GuiPainter::drawBitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const unsigned char* bitmap, uint8_t inverse)
 	{
-		m_impl.drawXBMP(x, y, width, height, bitmap);
+		m_impl.drawXBMP(x, y, width, height, bitmap,inverse);
 	}
 
 	void GuiPainter::coordinateXInit(uint8_t coordinate)

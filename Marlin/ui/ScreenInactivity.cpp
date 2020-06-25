@@ -81,7 +81,7 @@ namespace ui
 				uint8_t y_end = painter.coordinateYEnd();
 				uint8_t x_offset = 9;
 				uint8_t y_offset = 9;
-				painter.drawBitmap(x_init + x_offset, y_init + y_offset, logo_width, logo_height, bits_logo_about);
+				painter.drawBitmap(x_init + x_offset, y_init + y_offset, logo_width, logo_height, bits_logo_about,0);
 
 				//Print text
 				x_offset = 8;
@@ -97,7 +97,7 @@ namespace ui
 				//Paint bitmap inactivity on the right
 				x_init = 128 - inactivity_width - x_offset;
 				y_init += 3;
-				painter.drawBitmap(x_init, y_init + y_offset, inactivity_width, inactivity_height, icon_inactivity);
+				painter.drawBitmap(x_init, y_init + y_offset, inactivity_width, inactivity_height, icon_inactivity,0);
 
 				//Print temp
 				char temp[21] = "";
@@ -119,28 +119,28 @@ namespace ui
 				switch(m_frame)
 				{
 					case 0:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_1);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_1,0);
 						break;
 					case 1:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_2);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_2,0);
 						break;
 					case 2:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_3);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_3,0);
 						break;
 					case 3:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_4);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_4,0);
 						break;
 					case 4:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_5);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_5,0);
 						break;
 					case 5:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_6);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_6,0);
 						break;
 					case 6:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_7);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_7,0);
 						break;
 					case 7:
-						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_8);
+						painter.drawBitmap(x_init + 2, y_init + 2, progress_width, progress_height, bits_progress_8,0);
 						break;
 				}
 

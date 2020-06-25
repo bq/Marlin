@@ -120,6 +120,10 @@ namespace temp
 			
 			LookUpTableEntry m_bed_cache[4];
 			uint16_t m_bed_round_temperature;
+
+			uint16_t m_temp_protection_counter;
+			bool m_check_temp_protection;
+			bool m_force_disable_hotend;
 	};
 }
 

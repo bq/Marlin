@@ -11,7 +11,7 @@
 #define MACHINE_NAME "Hephestos 2"
 #define FIRMWARE_URL "http://www.bq.com/gb/support/prusa"
 #define SOURCE_CODE_URL "http://github.com/bq/Marlin"
-#define FIRMWARE_VER "2.5.1"
+#define FIRMWARE_VER "2.5.3"
 #define BUILD_VER ""
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 
@@ -133,7 +133,7 @@
 
 // Heated bed is considered hot at this temperature
 #define BED_HOT_TEMP 45
-#define BED_AUTOLEVEL_TEMP 50
+#define BED_AUTOLEVEL_TEMP 100
 
 // Heated bed control update frequency
 // Value is in CPU cycles. Calculation as follows:
@@ -232,6 +232,11 @@
 
 #define EXTRUDE_MINTEMP 170
 #define EXTRUDE_MAXLENGTH (X_MAX_LENGTH+Y_MAX_LENGTH) //prevent extrusion of very large distances.
+
+// Protection for thermistor not reading hotend temperature (incorrect mounting)
+#define THERMISTOR_PROTECTION_MAX_ENABLE_TEMP 80
+#define THERMISTOR_PROTECTION_WAIT_CYCLES 1200
+#define THERMISTOR_PROTECTION_MIN_TARGET_TEMP 100
 
 //===========================================================================
 //=============================Mechanical Settings===========================
@@ -341,7 +346,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //    Probe 3 arbitrary points on the bed (that aren't colinear)
 //    You must specify the X & Y coordinates of all 3 points
 
-  //#define AUTO_BED_LEVELING_GRID
+  #define AUTO_BED_LEVELING_GRID
   // with AUTO_BED_LEVELING_GRID, the bed is sampled in a
   // AUTO_BED_LEVELING_GRID_POINTSxAUTO_BED_LEVELING_GRID_POINTS grid
   // and least squares solution is calculated
@@ -349,35 +354,35 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
   #ifdef AUTO_BED_LEVELING_GRID
 
     // set the rectangle in which to probe
-    #define LEFT_PROBE_BED_POSITION 30
-    #define RIGHT_PROBE_BED_POSITION 200
-    #define BACK_PROBE_BED_POSITION 185
-    #define FRONT_PROBE_BED_POSITION 30
+    #define LEFT_PROBE_BED_POSITION 5
+    #define RIGHT_PROBE_BED_POSITION 170
+    #define BACK_PROBE_BED_POSITION 275
+    #define FRONT_PROBE_BED_POSITION 10
 
      // set the number of grid points per dimension
      // I wouldn't see a reason to go above 3 (=9 probing points on the bed)
-    #define AUTO_BED_LEVELING_GRID_POINTS 2
+    #define AUTO_BED_LEVELING_GRID_POINTS 3
 
-
-  #else  // not AUTO_BED_LEVELING_GRID
+  #endif // AUTO_BED_LEVELING_GRID
+   // not AUTO_BED_LEVELING_GRID
     // with no grid, just probe 3 arbitrary points.  A simple cross-product
     // is used to esimate the plane of the print bed
 
-      #define ABL_PROBE_PT_1_X X_MIN_POS + 40 + X_PROBE_OFFSET_FROM_EXTRUDER
-      #define ABL_PROBE_PT_1_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
-      #define ABL_PROBE_PT_2_X X_MAX_POS - 40 + X_PROBE_OFFSET_FROM_EXTRUDER 
-      #define ABL_PROBE_PT_2_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
-      #define ABL_PROBE_PT_3_X (X_MAX_POS+X_MIN_POS)/2 + X_PROBE_OFFSET_FROM_EXTRUDER
-      #define ABL_PROBE_PT_3_Y Y_MAX_POS - 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_1_X X_MIN_POS + 40 + X_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_1_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_2_X X_MAX_POS - 40 + X_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_2_Y Y_MIN_POS + 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_3_X (X_MAX_POS+X_MIN_POS)/2 + X_PROBE_OFFSET_FROM_EXTRUDER
+  #define ABL_PROBE_PT_3_Y Y_MAX_POS - 40 + Y_PROBE_OFFSET_FROM_EXTRUDER
 
-      #define ABL_MANUAL_PT_1_X ABL_PROBE_PT_1_X
-      #define ABL_MANUAL_PT_1_Y ABL_PROBE_PT_1_Y
-      #define ABL_MANUAL_PT_2_X ABL_PROBE_PT_2_X 
-      #define ABL_MANUAL_PT_2_Y ABL_PROBE_PT_2_Y
-      #define ABL_MANUAL_PT_3_X ABL_PROBE_PT_3_X
-      #define ABL_MANUAL_PT_3_Y ABL_PROBE_PT_3_Y
+  #define ABL_MANUAL_PT_1_X ABL_PROBE_PT_1_X
+  #define ABL_MANUAL_PT_1_Y ABL_PROBE_PT_1_Y
+  #define ABL_MANUAL_PT_2_X ABL_PROBE_PT_2_X
+  #define ABL_MANUAL_PT_2_Y ABL_PROBE_PT_2_Y
+  #define ABL_MANUAL_PT_3_X ABL_PROBE_PT_3_X
+  #define ABL_MANUAL_PT_3_Y ABL_PROBE_PT_3_Y
 
-  #endif // AUTO_BED_LEVELING_GRID
+  #define Z_PROBE_REPEAT_SENSOR 1
 
   #define Z_RAISE_BEFORE_HOMING 0       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
@@ -414,7 +419,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
 #define HOMING_FEEDRATE {150*60, 150*60, 3.3*60, 0}  //{50*60, 50*60, 4*60, 0} set the homing speeds (mm/min)
-#define HOMING_SLOW_FEEDRATE {150*60, 150*60, 3.3*60, 0}
+#define HOMING_SLOW_FEEDRATE {150*60, 150*60, 2.5*60, 0}
 
 // default settings
 
@@ -448,27 +453,20 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 #define WITBOX_2
 
-#ifdef WITBOX_2
-  #define WITBOX
-#endif
+#define EXTRUSION_SPEED 300
+#define LEVEL_PLATE_TEMP_PROTECTION 60
+#define FILAMENT_CHANGE_TEMP 210
 
-#ifdef WITBOX
-	#define EXTRUSION_SPEED 300
-	#define LEVEL_PLATE_TEMP_PROTECTION 60
-	#define FILAMENT_CHANGE_TEMP 210
+#define FILAMENT_EXTRUSION_LENGTH 30
+#define FILAMENT_UNLOAD_EXTRUSION_LENGTH 5
+#define FILAMENT_UNLOAD_RETRACTION_LENGTH 40
 
-	#define FILAMENT_EXTRUSION_LENGTH 30
-	#define FILAMENT_UNLOAD_EXTRUSION_LENGTH 5
-	#define FILAMENT_UNLOAD_RETRACTION_LENGTH 40
+#define PREHEAT_HOTEND_TEMP 200
+#define PREHEAT_FAN_SPEED 0
+#define COOLDOWN_FAN_SPEED 255
 
-    #define PREHEAT_HOTEND_TEMP 200
-    #define PREHEAT_FAN_SPEED 0
-    #define COOLDOWN_FAN_SPEED 255
-#endif
+#define XY_TRAVEL_SPEED 200//8000		// X and Y axis travel speed between probes and Witbox movements, in mm/s
 
-#if defined(WITBOX)
-  #define XY_TRAVEL_SPEED 200//8000		// X and Y axis travel speed between probes and Witbox movements, in mm/s
-#endif
 //===========================================================================
 //=============================Additional Features===========================
 //===========================================================================

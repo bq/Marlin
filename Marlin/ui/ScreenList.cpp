@@ -113,7 +113,7 @@ namespace ui
 			{
 				painter.setColorIndex(1);
 				painter.setFont(FontType_t::BODY_FONT);
-				painter.drawBitmap(x_init, y_init + 3, little_icon_width, little_icon_height, bits_updir_small);
+				painter.drawBitmap(x_init, y_init + 3, little_icon_width, little_icon_height, bits_updir_small,0);
 				painter.setPrintPos(x_init + 6, y_init + 3);
 				painter.print("/");
 				painter.setPrintPos(x_init + 12, y_init + 3);
@@ -161,13 +161,13 @@ namespace ui
 				{
 					if(entry->type == CacheEntryType_t::BACK_ENTRY)
 					{
-						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_back_small);
+						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_back_small,0);
 						painter.setPrintPos(painter.coordinateXInit() + 9, painter.coordinateYInit() + i * (max_font_height + 1));
 						painter.print_P(MSG_SCREEN_SD_LIST_BACK());
 					}
 					else
 					{
-						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_updir_small);
+						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_updir_small,0);
 						painter.setPrintPos(painter.coordinateXInit() + 9, painter.coordinateYInit() + i * (max_font_height + 1));
 						painter.print_P(MSG_SCREEN_SD_LIST_PREV());
 					}
@@ -176,7 +176,7 @@ namespace ui
 				{
 					if (entry->type == FOLDER_ENTRY)
 					{
-						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_folder_small);
+						painter.drawBitmap(painter.coordinateXInit() + 1, painter.coordinateYInit() + i * (max_font_height + 1), little_icon_width, little_icon_height, bits_folder_small,0);
 					}
 					painter.setPrintPos(painter.coordinateXInit() + 9, painter.coordinateYInit() + i * (max_font_height + 1));
 					if (entry == m_browsing_cache->getSelectedEntry())

@@ -76,7 +76,7 @@ namespace ui
 			uint8_t y_offset = 9;
 
 			Area temp_area = painter.getWorkingArea();
-			painter.drawBitmap(temp_area.x_init + x_offset, temp_area.y_init + y_offset, emergency_width, emergency_height, bits_emergency);
+			painter.drawBitmap(temp_area.x_init + x_offset, temp_area.y_init + y_offset, emergency_width, emergency_height, bits_emergency,0);
 
 			Area text_area(40, 14, 127, 54);
 			painter.setWorkingArea(text_area);
