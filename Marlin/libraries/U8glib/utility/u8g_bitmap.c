@@ -132,13 +132,37 @@ void u8g_DrawXBM(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_
   }
 }
 
-static void u8g_DrawHXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, const u8g_pgm_uint8_t *bitmap)
+static void u8g_DrawHXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, const u8g_pgm_uint8_t *bitmap, uint8_t inverse, uint8_t actual_y)
 {
   uint8_t d;
   x+=7;
+  uint8_t first=0;
+  uint8_t iconfocusedheight = 22;
+
   while( w >= 8 )
   {
-    u8g_Draw8Pixel(u8g, x, y, 2, u8g_pgm_read(bitmap));
+    if(inverse==0){
+      d = u8g_pgm_read(bitmap);
+    }else{
+      d = ~u8g_pgm_read(bitmap);
+      if(first==0){
+        d ^= (1u << 0);
+        if(actual_y<2 || actual_y+3>iconfocusedheight){
+          d ^= (1u << 1);
+        }
+        first=1;
+      }
+
+      if(w ==8){
+        d ^= (1u << 7);
+        if(actual_y<2 || actual_y+3>iconfocusedheight){
+          d ^= (1u << 6);
+        }
+      }
+
+    }
+
+    u8g_Draw8Pixel(u8g, x, y, 2, d);
     bitmap++;
     w-= 8;
     x+=8;
@@ -149,8 +173,14 @@ static void u8g_DrawHXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, 
     x -= 7;
     do
     {
-      if ( d & 1 )
+      if(inverse==1&& w !=1){
         u8g_DrawPixel(u8g, x, y);
+      }else{
+        if ( d & 1 ){
+          u8g_DrawPixel(u8g, x, y);
+        }
+      }
+
       x++;
       w--;
       d >>= 1;      
@@ -158,18 +188,22 @@ static void u8g_DrawHXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, 
   }
 }
 
-void u8g_DrawXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_t h, const u8g_pgm_uint8_t *bitmap)
+void u8g_DrawXBMP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, u8g_uint_t w, u8g_uint_t h, const u8g_pgm_uint8_t *bitmap, uint8_t inverse)
 {
   u8g_uint_t b;
   b = w;
   b += 7;
   b >>= 3;
-  
+  u8g_uint_t init_h;
+  u8g_uint_t init_y;
+  init_h=h;
+  init_y=y;
+
   if ( u8g_IsBBXIntersection(u8g, x, y, w, h) == 0 )
     return;
   while( h > 0 )
   {
-    u8g_DrawHXBMP(u8g, x, y, w, bitmap);
+    u8g_DrawHXBMP(u8g, x, y, w, bitmap, (h==init_h || h==1) ? 0 : inverse, y-init_y);
     bitmap += b;
     y++;
     h--;

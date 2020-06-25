@@ -30,10 +30,9 @@
 
 namespace ui
 {
-	Icon::Icon (Size const & size, const unsigned char* bitmap, const unsigned char * focused_bitmap, const char * text)
+	Icon::Icon (Size const & size, const unsigned char* bitmap, const char * text)
 		: m_size(size)
 		, m_bitmap(bitmap)
-		, m_focused_bitmap(focused_bitmap)
 		, m_text(text)
 	{ }
 
@@ -58,7 +57,7 @@ namespace ui
 	void Icon::draw(uint8_t x, uint8_t y, bool focused)
 	{
 		painter.setColorIndex(1);
-		painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap : m_bitmap);
+		painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap, (focused) ? 1 : 0);
 	}
 
 	void Icon::show()

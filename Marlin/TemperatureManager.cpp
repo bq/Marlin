@@ -43,6 +43,9 @@
 	#include "ViewManager.h"
 	#include "FanManager.h"
 	#include "HeatedbedManager.h"
+#else
+	#include "Serial.h"
+	#include "ultralcd.h"
 #endif
 
 namespace temp
@@ -59,6 +62,9 @@ namespace temp
 		, m_control()
 #endif // DOGLCD
 		, m_blower_control(true)
+		, m_temp_protection_counter(0)
+		, m_check_temp_protection(false)
+		, m_force_disable_hotend(false)
 	{
 		setTargetTemperature(0);
 		SET_OUTPUT(HEATER_0_PIN);
@@ -237,6 +243,31 @@ namespace temp
 			notify();
 		}
 		fanControl();
+
+		if(m_check_temp_protection)
+		{
+			--m_temp_protection_counter;
+			if(m_temp_protection_counter == 0)
+			{
+				if(temp < THERMISTOR_PROTECTION_MIN_TARGET_TEMP)
+				{
+					setTargetTemperature(0);
+#ifdef DOGLCD
+					lcd_disable_button();
+					ui::ViewManager::getInstance().activeView(ui::screen_error_temperature);
+#else
+					SERIAL_ERROR_START;
+					SERIAL_ERRORLNPGM(MSG_ERR_NO_THERMISTORS);
+					LCD_MESSAGEPGM("thermistor error");
+					m_force_disable_hotend = true;
+#endif // DOGLCD
+				}
+				else
+				{
+					m_check_temp_protection = false;
+				}
+			}
+		}
 	}
 
 	void TemperatureManager::updateCurrentTemperatureRaw(uint16_t temp)
@@ -253,20 +284,37 @@ namespace temp
 	void TemperatureManager::setTargetTemperature(uint16_t target)
 	{
 		m_target_temperature = target;
-	#ifdef DOGLCD
+
 		if(target > HEATER_0_MINTEMP)
 		{
+#ifdef DOGLCD
 			TCCR2A |= 0x20;
+#endif // DOGLCD
+			// enable temperature check if starting temperature
+			// is lower than mintemp
+			if(getCurrentTemperature() < THERMISTOR_PROTECTION_MAX_ENABLE_TEMP
+			   && target > THERMISTOR_PROTECTION_MIN_TARGET_TEMP)
+			{
+				m_check_temp_protection = true;
+				m_temp_protection_counter = THERMISTOR_PROTECTION_WAIT_CYCLES;
+			}
 		}
 		else
 		{
+#ifdef DOGLCD
 			TCCR2A &= 0xDF;
+#endif // DOGLCD
+			m_check_temp_protection = false;
+			m_temp_protection_counter = 0;
 		}
-		
+#ifdef DOGLCD
 		m_control->setTargetControl(target);
-	#else
-		target_temperature[0] = target;
-	#endif // DOGLCD
+#else
+		if(!m_force_disable_hotend)
+		{
+			target_temperature[0] = target;
+		}
+#endif // DOGLCD
 	}
 
 	uint16_t const & TemperatureManager::getTargetTemperature() const
@@ -433,6 +481,10 @@ namespace temp
 			}
 		#endif // MB(BQ_ZUM_MEGA_3D)
 	#else
+		if(m_force_disable_hotend)
+		{
+			target_temperature[0] = 0;
+		}
 		manage_heater();
 	#endif
 	}

@@ -103,7 +103,7 @@ uint8_t HeatedbedManager::mode()
 {
 	if(m_bed_detected)
 	{
-		uint8_t const num_modes = 3;
+		uint8_t const num_modes = 2;
 		
 		mode((m_mode+1) % num_modes);
 	}

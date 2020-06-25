@@ -39,7 +39,7 @@ namespace ui
 		class IconStatus : public Icon, public Observer<T>
 	{
 		public:
-			IconStatus(Size const & size, const unsigned char * bitmap, const unsigned char * focused_bitmap, const unsigned char * alt_bitmap, const unsigned char * alt_focused_bitmap, const char * text, const char * alt_text, Subject<T> * model);
+			IconStatus(Size const & size, const unsigned char * bitmap, const unsigned char * alt_bitmap, const char * text, const char * alt_text, Subject<T> * model);
 			virtual ~IconStatus();
 
 			void update(T value);
@@ -51,15 +51,13 @@ namespace ui
 		private:
 			T m_value;
 			const unsigned char * m_alt_bitmap;
-			const unsigned char * m_alt_focused_bitmap;
 			const char * m_alt_text;
 	};
 
 	template <typename T>
-	IconStatus<T>::IconStatus(Size const & size, const unsigned char * bitmap, const unsigned char * focused_bitmap, const unsigned char * alt_bitmap, const unsigned char * alt_focused_bitmap, const char * text, const char * alt_text, Subject<T> * model)
-		: Icon(size, bitmap, focused_bitmap, text)
+	IconStatus<T>::IconStatus(Size const & size, const unsigned char * bitmap, const unsigned char * alt_bitmap, const char * text, const char * alt_text, Subject<T> * model)
+		: Icon(size, bitmap, text)
 		, m_alt_bitmap(alt_bitmap)
-		, m_alt_focused_bitmap(alt_focused_bitmap)
 		, m_alt_text(alt_text)
 		, Observer<T>(model)
 	{ }
@@ -94,11 +92,11 @@ namespace ui
 
     	if (m_value)
     	{
-			painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_alt_focused_bitmap : m_alt_bitmap);
+			painter.drawBitmap(x, y, m_size.width, m_size.height, m_alt_bitmap, (focused) ? 1 : 0);
 		}
 		else
 		{
-			painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap : m_bitmap);
+			painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap, (focused) ? 1 : 0);
 		}
 	}
 

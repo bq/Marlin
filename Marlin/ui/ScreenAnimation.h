@@ -155,28 +155,28 @@ namespace ui
 				switch(m_frame)
 				{
 					case 0:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_1);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_1,0);
 						break;
 					case 1:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_2);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_2,0);
 						break;
 					case 2:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_3);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_3,0);
 						break;
 					case 3:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_4);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_4,0);
 						break;
 					case 4:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_5);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_5,0);
 						break;
 					case 5:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_6);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_6,0);
 						break;
 					case 6:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_7);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_7,0);
 						break;
 					case 7:
-						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_8);
+						painter.drawBitmap(10, 40, progress_width, progress_height, bits_progress_8,0);
 						break;
 				}
 

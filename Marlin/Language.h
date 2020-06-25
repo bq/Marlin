@@ -49,7 +49,7 @@ enum class Language
 	FR,     // French
 	PT,     // Portuguese
 	IT,     // Italian
-	SE,     // Swedish
+	//SE,     // Swedish
 	RU,		// Russian
 	MAX_LANGUAGES
 };
@@ -83,17 +83,19 @@ const char * MSG_##label() \
    { \
       text = IT_##label; \
    } \
-   else if (LANG == Language::SE) \
-   { \
-      text = SE_##label; \
-   } \
-   else if (LANG == Language::RU) \
+      else if (LANG == Language::RU) \
    { \
       text = RU_##label; \
    } \
    return text; \
 }
 
+/*
+else if (LANG == Language::SE) \
+   { \
+      text = SE_##label; \
+   } \
+*/
 enum class Label
 {
 	NONE = 0,

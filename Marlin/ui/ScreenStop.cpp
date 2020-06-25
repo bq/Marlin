@@ -54,7 +54,7 @@ namespace ui
 			painter.setPrintPos(padding, 43);
 			painter.print(height);
 
-			painter.drawBitmap(127 - strlen(total_time) * 6 - padding - icon_clock_width - 2, 43, icon_clock_width, icon_clock_height, icon_clock);
+			painter.drawBitmap(127 - strlen(total_time) * 6 - padding - icon_clock_width - 2, 43, icon_clock_width, icon_clock_height, icon_clock,0);
 			painter.setPrintPos( 127 - strlen(total_time) * 6 - padding, 43);
 			painter.print(total_time);
 

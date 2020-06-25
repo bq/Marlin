@@ -116,7 +116,7 @@ namespace ui
 
 			void drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
 			void drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
-			void drawBitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const unsigned char* bitmap);
+			void drawBitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const unsigned char* bitmap, uint8_t inverse);
 
 			char * itostr2(const int &xx);
 

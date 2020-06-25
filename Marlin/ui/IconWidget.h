@@ -38,7 +38,7 @@ namespace ui
 		class IconWidget : public Icon, public Observer<T>
 	{
 		public:
-			IconWidget(Size const & size, const unsigned char* bitmap, const unsigned char * focused_bitmap, const char * text, Subject<T> * model);
+			IconWidget(Size const & size, const unsigned char* bitmap, const char * text, Subject<T> * model);
 			virtual ~IconWidget();
 
 			void update(T value);
@@ -51,8 +51,8 @@ namespace ui
 	};
 
 	template <typename T>
-	IconWidget<T>::IconWidget(Size const & size, const unsigned char* bitmap, const unsigned char * focused_bitmap, const char * text, Subject<T> * model)
-		: Icon(size, bitmap, focused_bitmap, text)
+	IconWidget<T>::IconWidget(Size const & size, const unsigned char* bitmap, const char * text, Subject<T> * model)
+		: Icon(size, bitmap, text)
 		, Observer<T>(model)
 	{ }
 
@@ -70,7 +70,7 @@ namespace ui
 	void IconWidget<T>::draw(uint8_t x, uint8_t y, bool focused)
 	{
 		painter.setColorIndex(1);
-		painter.drawBitmap(x, y, m_size.width, m_size.height, (focused) ? m_focused_bitmap : m_bitmap);
+		painter.drawBitmap(x, y, m_size.width, m_size.height, m_bitmap, (focused) ? 1 : 0);
 
 		if(focused)
 		{

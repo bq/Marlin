@@ -58,7 +58,7 @@ namespace ui
 			uint8_t x_offset = 6;
 			uint8_t y_offset = 4;
 			painter.setColorIndex(1);
-			painter.drawBitmap(x_init + x_offset, y_init + y_offset, logo_width, logo_height, bits_logo_about);
+			painter.drawBitmap(x_init + x_offset, y_init + y_offset, logo_width, logo_height, bits_logo_about,0);
 			//Print machine name centered
 			uint8_t h_pad = strlen_P(MACHINE_NAME)*6/2;
 			x_init = x_offset + logo_width + 8;
